@@ -166,6 +166,25 @@ app.get('/:subreddit', (req, res) => {
   // })
   // console.log(c)
 
+  const influencers = authors.map((author) => {
+    console.log(author)
+    const allposts = Object.keys(author.posts).reduce((arr, key) => arr.concat(author.posts[key].data.children), [])
+    const selfposts = allposts.filter((p) => p.data.is_self)
+
+    const all_bySubreddit = groupBy((p) => p.data.subreddit, allposts)
+    const self_bySubreddit = groupBy((p) => p.data.subreddit, selfposts)
+
+    return {
+      name: author.name,
+      link_karma: author.about.data.link_karma,
+      comment_karma: author.about.data.comment_karma,
+      post_count: allposts.length,
+      selfpost_count: selfposts.length,
+      selfpost_percentage: (selfposts.length / allposts.length) * 100,
+      other_subreddits: mapObjIndexed((arr) => arr.length, all_bySubreddit)
+    }
+  })
+
   const reddit = {
     name: data.name,
     subscribers: data.about.data.subscribers,
@@ -179,8 +198,12 @@ app.get('/:subreddit', (req, res) => {
 
       domains,
       selfposts
-    }
+    },
+
+    influencers
   }
+
+
 
   res.json({ reddit })
 })

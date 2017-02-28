@@ -6,12 +6,14 @@
   "scripts": {
     "server": "./node_modules/.bin/nodemon --exec \"./node_modules/.bin/babel-node\" ./src/api",
     "reddit": "./node_modules/.bin/babel-node ./src/background",
+    "alerts": "./node_modules/.bin/babel-node ./src/background/alerts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "express": "^4.14.1",
+    "form-data": "^2.1.2",
     "node-fetch": "^1.6.3",
     "ramda": "^0.23.0"
   },

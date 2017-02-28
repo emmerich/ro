@@ -4,9 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "server": "./node_modules/.bin/nodemon --exec \"./node_modules/.bin/babel-node\" ./src/api",
-    "reddit": "./node_modules/.bin/babel-node ./src/background",
-    "alerts": "./node_modules/.bin/babel-node ./src/background/alerts",
+    "start": "./node_modules/.bin/babel-node ./src",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
@@ -25,6 +23,7 @@
     "babel-preset-stage-0": "^6.22.0",
     "cors": "^2.8.1",
     "fs-extra": "^2.0.0",
-    "nodemon": "^1.11.0"
+    "nodemon": "^1.11.0",
+    "q": "^1.4.1"
   }
 }

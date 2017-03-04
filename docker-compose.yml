@@ -1,0 +1,30 @@
+version: '3'
+
+services:
+  ro-redis:
+    container_name: ro-redis
+    image: redis:3.2
+
+  ro-db:
+    container_name: ro-db
+    image: mongo:3.0
+
+  ro-pull:
+    container_name: ro-pull
+    build:
+      context: .
+      dockerfile: ./pull/Dockerfile
+    depends_on:
+      - ro-redis
+      - ro-process
+
+  ro-process:
+    container_name: ro-process
+    build:
+      context: .
+      dockerfile: ./process/Dockerfile
+    volumes:
+      - ./output:/usr/src/db
+    depends_on:
+      - ro-redis
+      - ro-db

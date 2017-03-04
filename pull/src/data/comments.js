@@ -1,4 +1,5 @@
 import { omit, tail } from 'ramda'
+import omitFalsey from '../functions/omitFalsey'
 
 const COMMENT_KIND = 't1'
 const UNWANTED_COMMENT_FIELDS = [
@@ -18,7 +19,16 @@ const UNWANTED_COMMENT_FIELDS = [
   'subreddit_type',
   'mod_reports',
   'num_reports',
-  'distinguished'
+  'distinguished',
+  'body_html',
+  'author_flair_css_class',
+  'author_flair_text',
+  'depth',
+  'created',
+  'archived',
+  'controversiality',
+  'score_hidden',
+  'name'
 ]
 
 const getThinComment = (comment) => omit(UNWANTED_COMMENT_FIELDS, comment)
@@ -30,7 +40,9 @@ const flattenComment = (comment) => {
     return []
   }
 
-  let tempRes = [getThinComment(data)]
+  const thinComment = getThinComment(data)
+  const withoutFalseyValues = omitFalsey(thinComment)
+  let tempRes = [withoutFalseyValues]
 
   if(data.replies) {
     tempRes = tempRes.concat(flattenCommentArray(data.replies))
@@ -44,21 +56,21 @@ const flattenCommentArray = (arr) => {
   return comments.reduce((result, comment) => result.concat(flattenComment(comment)), [])
 }
 
-export default async (subreddit, postID, graw) => {
-  const url = `/r/${subreddit}/comments/${postID}?depth=5&sort=top`
+export default async (subreddit, postID, graw, log) => {
+  const url = `/r/${subreddit}/comments/${postID}?depth=2&sort=top&limit=50`
   const resp = await graw(url)
 
   // The first item in the array is the post itself. Omit this.
   const responseWithoutOriginalPost = tail(resp)
 
   if(responseWithoutOriginalPost.length !== 1) {
-    console.log('Expected comments without original post to be only 1 array, but its more')
+    log.warn('Expected comments without original post to be only 1 array, but its more')
   }
 
   const comments = responseWithoutOriginalPost[0]
   const flattenedComments = flattenCommentArray(comments)
 
-  console.log(`Retrieved ${flattenedComments.length} comments for post ${postID} in /r/${subreddit}`)
+  log.debug(`Retrieved ${flattenedComments.length} comments for post ${postID} in /r/${subreddit}`)
 
   return flattenedComments
 }

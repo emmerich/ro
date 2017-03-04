@@ -1,12 +1,9 @@
 import fetch from 'node-fetch'
 import { defer } from 'q'
+import createStore from './store'
 
 const refreshID = async () => {
   console.log('Refreshing reddit ID')
-  // const body = new FormData()
-  // body.append('grant_type', 'client_credentials')
-
-  // console.log('Body', body)
 
   const res = await fetch('https://www.reddit.com/api/v1/access_token', {
     method: 'post',
@@ -35,25 +32,27 @@ const request = (url, id) => fetch(url, {
   }
 })
 
-const create = () => {
+const create = async (redis, log) => {
   let requestQueue = []
-  let id = "6mP7uxSzgb3MFuyc8I8OlT8vcDk"
+  const store = createStore(redis)
+  let id = await store.getKey()
 
   const first = defer()
   let currentRequest = first.promise
   first.resolve()
 
+  log.info(`Graw built with key ${id}`)
+
   return async (url) => {
     let actualURL = `https://oauth.reddit.com${url}`
-
 
     currentRequest = currentRequest.then(async () => {
       let res = await request(actualURL, id)
 
-
       if(res.status === 401) {
         // ID has expired, need a new one.
         id = await refreshID()
+        await store.setKey(id)
         res = await request(actualURL, id)
       }
 

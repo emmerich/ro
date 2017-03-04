@@ -1,0 +1,27 @@
+{
+  "name": "ro-pull",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "private": true,
+  "scripts": {
+    "start": "node ./dist/bundle.js"
+  },
+  "dependencies": {
+    "hiredis": "^0.5.0",
+    "ioredis": "^2.5.0",
+    "node-fetch": "^1.6.3",
+    "ramda": "^0.23.0",
+    "ro-common": "file:../common"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.22.2",
+    "babel-core": "^6.22.1",
+    "babel-loader": "^6.3.2",
+    "babel-preset-env": "^1.2.0",
+    "fs-extra": "^2.0.0",
+    "q": "^1.4.1",
+    "webpack": "^2.2.1",
+    "webpack-node-externals": "^1.5.4"
+  }
+}

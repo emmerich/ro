@@ -45,8 +45,6 @@ export default async (subreddit, graw, log) => {
   const url = `/r/${subreddit}/hot?limit=${LIMIT}`
   const resp = await graw(url)
 
-  log.debug(`Retrieved ${LIMIT} hot posts for ${subreddit}`)
-
   const posts = resp.data.children
   const thinPosts = posts.map((post) =>
     Object.assign(
@@ -58,6 +56,5 @@ export default async (subreddit, graw, log) => {
   )
 
   const postsWithoutFalseyValues = thinPosts.map((post) => omitFalsey(post))
-
   return postsWithoutFalseyValues
 }

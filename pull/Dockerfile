@@ -4,6 +4,7 @@ RUN mkdir -p /usr/src/app
 RUN mkdir -p /usr/src/common
 
 COPY ./pull /usr/src/app
+COPY ./wait-for-it.sh /usr/src/app
 COPY ./common /usr/src/common
 
 WORKDIR /usr/src/app

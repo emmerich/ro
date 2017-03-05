@@ -4,10 +4,14 @@ services:
   ro-redis:
     container_name: ro-redis
     image: redis:3.2
+    volumes:
+      - ./output/redis:/data
 
   ro-db:
     container_name: ro-db
     image: mongo:3.0
+    volumes:
+      - ./output/mongo:/data/db
 
   ro-pull:
     container_name: ro-pull
@@ -17,6 +21,8 @@ services:
     depends_on:
       - ro-redis
       - ro-process
+      - ro-db
+    command: ["./wait-for-it.sh", "ro-db:27017", "--", "npm", "start"]
 
   ro-process:
     container_name: ro-process
@@ -24,7 +30,8 @@ services:
       context: .
       dockerfile: ./process/Dockerfile
     volumes:
-      - ./output:/usr/src/db
+      - ./output:/usr/db
     depends_on:
       - ro-redis
       - ro-db
+    command: ["./wait-for-it.sh", "ro-db:27017", "--", "npm", "start"]

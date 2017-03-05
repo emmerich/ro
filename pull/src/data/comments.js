@@ -70,7 +70,5 @@ export default async (subreddit, postID, graw, log) => {
   const comments = responseWithoutOriginalPost[0]
   const flattenedComments = flattenCommentArray(comments)
 
-  log.debug(`Retrieved ${flattenedComments.length} comments for post ${postID} in /r/${subreddit}`)
-
   return flattenedComments
 }

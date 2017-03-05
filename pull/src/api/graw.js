@@ -2,9 +2,7 @@ import fetch from 'node-fetch'
 import { defer } from 'q'
 import createStore from './store'
 
-const refreshID = async () => {
-  console.log('Refreshing reddit ID')
-
+const refreshID = async (log) => {
   const res = await fetch('https://www.reddit.com/api/v1/access_token', {
     method: 'post',
     headers: {
@@ -41,7 +39,7 @@ const create = async (redis, log) => {
   let currentRequest = first.promise
   first.resolve()
 
-  log.info(`Graw built with key ${id}`)
+  log.info(`Built GRAW. Initial id: ${id}`)
 
   return async (url) => {
     let actualURL = `https://oauth.reddit.com${url}`
@@ -49,14 +47,21 @@ const create = async (redis, log) => {
     currentRequest = currentRequest.then(async () => {
       let res = await request(actualURL, id)
 
+      log.trace(`GRAW ${res.status} ${actualURL}`)
+
       if(res.status === 401) {
+        log.debug(`GRAW key has expired. Requesting new key.`)
         // ID has expired, need a new one.
-        id = await refreshID()
+        id = await refreshID(log)
+
+        log.trace(`GRAW new access token ${id}`)
         await store.setKey(id)
+        
         res = await request(actualURL, id)
       }
 
       if(res.status !== 200) {
+        log.error(`GRAW returned bad status ${res.statusText}`)
         throw `bad status ${res.status}`
       }
 

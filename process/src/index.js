@@ -1,28 +1,21 @@
 import RedisClient from 'ioredis'
-import { writeFileSync, ensureDirSync } from 'fs-extra'
 import { join } from 'path'
 import createLogger from 'ro-common/src/log'
 import createMongoClient from 'ro-common/src/mongo/createMongoClient'
+import handleNewPostBuilder from './handlers/newPost'
+import handleUpdatedPostBuilder from './handlers/updatedPost'
+import handleDroppedPostBuilder from './handlers/droppedPost'
 
 const OUTPUT_ROOT = join('/', 'usr', 'db', 'posts')
 
 ;(async () => {
-  ensureDirSync(OUTPUT_ROOT)
-
   const log = createLogger()
   const redis = new RedisClient({ host: 'ro-redis' })
   const mongo = await createMongoClient('mongodb://ro-db:27017/ro')
 
-  const handleNewPost = (post) => log.info('New post', post.subreddit, post.id)
-  const handleUpdatedPost = (post) => log.info('Updated post', post.subreddit, post.id)
-
-  const handleDroppedPost = (post) => {
-    log.info('Dropped post', post.subreddit, post.id)
-    const outputDir = join(OUTPUT_ROOT, post.subreddit)
-
-    ensureDirSync(outputDir)
-    writeFileSync(join(outputDir, `${post.id}.json`), JSON.stringify(post, null, 2))
-  }
+  const handleNewPost = handleNewPostBuilder(mongo, log)
+  const handleUpdatedPost = handleUpdatedPostBuilder(mongo, log)
+  const handleDroppedPost = handleDroppedPostBuilder(OUTPUT_ROOT, log)
 
   redis.on('message', (channel, message) => {
     const post = JSON.parse(message)

@@ -35,3 +35,13 @@ services:
       - ro-redis
       - ro-db
     command: ["./wait-for-it.sh", "ro-db:27017", "--", "npm", "start"]
+
+  ro-front:
+    container_name: ro-front
+    build:
+      context: .
+      dockerfile: ./front/Dockerfile
+    depends_on:
+      - ro-db
+    ports:
+      - "3000-3005"

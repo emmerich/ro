@@ -13,8 +13,11 @@ const OUTPUT_ROOT = join('/', 'usr', 'db', 'posts')
   const redis = new RedisClient({ host: 'ro-redis' })
   const mongo = await createMongoClient('mongodb://ro-db:27017/ro')
 
-  const handleNewPost = handleNewPostBuilder(mongo, log)
-  const handleUpdatedPost = handleUpdatedPostBuilder(mongo, log)
+  const templatesCollection = mongo.collection('templates')
+  const alertsCollection = mongo.collection('alerts')
+
+  const handleNewPost = handleNewPostBuilder(log)
+  const handleUpdatedPost = handleUpdatedPostBuilder(log)
   const handleDroppedPost = handleDroppedPostBuilder(OUTPUT_ROOT, log)
 
   redis.on('message', (channel, message) => {
@@ -22,9 +25,9 @@ const OUTPUT_ROOT = join('/', 'usr', 'db', 'posts')
 
     switch(channel) {
       case 'posts_new':
-        return handleNewPost(post)
+        return handleNewPost(post, templatesCollection, alertsCollection)
       case 'posts_updated':
-        return handleUpdatedPost(post)
+        return handleUpdatedPost(post, templatesCollection, alertsCollection)
       case 'posts_dropped':
         return handleDroppedPost(post)
     }

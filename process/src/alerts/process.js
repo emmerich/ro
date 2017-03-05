@@ -68,10 +68,7 @@ const getNonTriggeredTemplates = async (templates, alertsCollection, post) => {
   return templates.filter((template) => !alerts.some((alert) => alert.templateID.equals(template._id)))
 }
 
-export default async (post, mongo, log) => {
-  const templatesCollection = mongo.collection('templates')
-  const alertsCollection = mongo.collection('alerts')
-
+export default async (post, templatesCollection, alertsCollection, log) => {
   const templates = await get(templatesCollection, {
     subreddits: { $in: [ post.subreddit ] }
   })

@@ -10,6 +10,7 @@
 import path from 'path';
 import webpack from 'webpack';
 import AssetsPlugin from 'assets-webpack-plugin';
+import nodeExternals from 'webpack-node-externals';
 import pkg from '../package.json';
 
 const isDebug = !process.argv.includes('--release');
@@ -276,13 +277,10 @@ const serverConfig = {
   resolve: { ...config.resolve },
 
   externals: [
+    nodeExternals({
+      whitelist: [/^ro-/],
+    }),
     /^\.\/assets\.json$/,
-    (context, request, callback) => {
-      const isExternal =
-        request.match(/^[@a-z][a-z/.\-0-9]*$/i) &&
-        !request.match(/\.(css|less|scss|sss)$/i);
-      callback(null, Boolean(isExternal));
-    },
   ],
 
   plugins: [

@@ -15,12 +15,12 @@ import {
 import alerts from './queries/alerts';
 import createAlert from './queries/createAlert';
 
-const schema = new Schema({
+const schema = mongo => new Schema({
   query: new ObjectType({
     name: 'Query',
     fields: {
-      alerts,
-      createAlert,
+      alerts: alerts(mongo),
+      createAlert: createAlert(mongo),
     },
   }),
 });

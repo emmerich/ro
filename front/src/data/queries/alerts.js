@@ -10,15 +10,15 @@
 import {
  GraphQLList as ListType,
 } from 'graphql';
+import getAll from 'ro-common/src/mongo/getAll';
 import AlertType from '../types/AlertType';
-import Alert from '../models/Alert';
 
-const alerts = {
+const alerts = mongo => ({
   type: new ListType(AlertType),
   async resolve() {
-    const all = await Alert.findAll();
-    return all;
+    const templates = mongo.collection('templates');
+    return getAll(templates);
   },
-};
+});
 
 export default alerts;

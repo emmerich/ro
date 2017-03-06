@@ -11,9 +11,8 @@ import {
  GraphQLString as StringType,
 } from 'graphql';
 import AlertType from '../types/AlertType';
-import Alert from '../models/Alert';
 
-const createAlert = {
+const createAlert = mongo => ({
   type: AlertType,
   args: {
     term: {
@@ -25,10 +24,9 @@ const createAlert = {
     },
   },
   async resolve(req, { term, subreddit }) {
-    console.log('createAlert', term, subreddit);
-    const alert = Alert.create({ term, subreddit });
-    return alert;
+    const templates = mongo.collection('templates');
+    return templates.insert({ term, subreddits: [subreddit] });
   },
-};
+});
 
 export default createAlert;

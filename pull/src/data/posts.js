@@ -21,7 +21,6 @@ const UNWANTED_POST_FIELDS = [
   'subreddit_name_prefixed',
   'link_flair_css_class',
   'author_flair_css_class',
-  'permalink',
   'thumbnail',
   'name',
   'approved_by',
@@ -32,7 +31,8 @@ const UNWANTED_POST_FIELDS = [
   'secure_media',
   'secure_media_embed',
   'subreddit_type',
-  'created'
+  'created',
+  'domain'
 ]
 
 const UNWANTED_MEDIA_FIELD = [

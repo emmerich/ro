@@ -11,7 +11,7 @@ export default (redisPub, redis, log) => {
   return async ({ subreddit, posts }) => {
 
     log.info(`Process pipe received ${posts.length} posts for /r/${subreddit}`)
-    const now = Date.now()
+    const now = Math.ceil(Date.now() / 1000) // Use seconds.
 
     await Promise.all(posts.map(async (post) => {
       const key = getKey(subreddit, post.id)

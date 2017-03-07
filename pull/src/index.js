@@ -6,7 +6,7 @@ import createLogger from 'ro-common/src/log'
 import createMongoClient from 'ro-common/src/mongo/createMongoClient'
 import getAll from 'ro-common/src/mongo/getAll'
 
-const INTERVAL = 1000 * 60 * 30
+const INTERVAL = 1000 * 60 * 60
 
 const getSubredditsToFetch = async (mongo) => {
   const subreddits = await getAll(mongo.collection('subreddits'))

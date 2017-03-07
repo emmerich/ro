@@ -28,7 +28,8 @@ const UNWANTED_COMMENT_FIELDS = [
   'archived',
   'controversiality',
   'score_hidden',
-  'name'
+  'name',
+  'link_id'
 ]
 
 const getThinComment = (comment) => omit(UNWANTED_COMMENT_FIELDS, comment)

@@ -5,7 +5,7 @@ export default (outputRoot, log) => async (post) => {
   log.info(`DROPPED /r/${post.subreddit} - ${post.id}`)
 
   // Extract data.
-  
+
   const outputDir = join(outputRoot, post.subreddit)
 
   ensureDirSync(outputDir)

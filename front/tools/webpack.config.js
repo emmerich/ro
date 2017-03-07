@@ -245,7 +245,7 @@ const serverConfig = {
   target: 'node',
 
   entry: {
-    server: ['babel-polyfill', './server.js'],
+    server: './server.js',
   },
 
   output: {

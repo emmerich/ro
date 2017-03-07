@@ -10,7 +10,7 @@ COPY ./common /usr/src/common
 
 WORKDIR /usr/src/app
 
-RUN npm install --production --no-progress
+RUN yarn install --force --no-progress
+RUN yarn build
 
-# CMD [ "node", "server.js" ]
-CMD [ "yarn", "start" ]
+CMD [ "node", "./build/server.js" ]

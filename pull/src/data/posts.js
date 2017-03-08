@@ -32,7 +32,8 @@ const UNWANTED_POST_FIELDS = [
   'secure_media_embed',
   'subreddit_type',
   'created',
-  'domain'
+  'domain',
+  'url'
 ]
 
 const UNWANTED_MEDIA_FIELD = [

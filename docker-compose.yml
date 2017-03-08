@@ -26,6 +26,9 @@ services:
     build:
       context: .
       dockerfile: ./pull/Dockerfile
+    environment:
+      REDDIT_UA: web:RedditOutreach:v0.0.1 (by /u/stvhl)
+      REDDIT_KEY: N1B0RU93Rkk5OUJ2OFE6RE1RR2x1WG16SnFINjZzNU1fU3cwMS1mLUQ4
     depends_on:
       - ro-redis
       - ro-process

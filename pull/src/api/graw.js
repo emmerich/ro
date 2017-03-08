@@ -6,9 +6,9 @@ const refreshID = async (log) => {
   const res = await fetch('https://www.reddit.com/api/v1/access_token', {
     method: 'post',
     headers: {
-      'User-Agent': 'JohnnyBravo/0.1 by JBTopGuy',
+      'User-Agent': process.env.REDDIT_UA,
       'Content-Type': 'application/x-www-form-urlencoded',
-      'Authorization': 'Basic N1B0RU93Rkk5OUJ2OFE6RE1RR2x1WG16SnFINjZzNU1fU3cwMS1mLUQ4'
+      'Authorization': `Basic ${process.env.REDDIT_KEY}`
     },
     body: 'grant_type=client_credentials'
   })
@@ -26,7 +26,7 @@ const refreshID = async (log) => {
 const request = (url, id) => fetch(url, {
   headers: {
     'Authorization': `bearer ${id}`,
-    'User-Agent': "JohnnyBravo/0.1 by JBTopGuy"
+    'User-Agent': process.env.REDDIT_UA
   }
 })
 
@@ -56,7 +56,7 @@ const create = async (redis, log) => {
 
         log.trace(`GRAW new access token ${id}`)
         await store.setKey(id)
-        
+
         res = await request(actualURL, id)
       }
 

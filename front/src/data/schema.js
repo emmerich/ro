@@ -14,6 +14,7 @@ import {
 
 import alerts from './queries/alerts';
 import createAlert from './queries/createAlert';
+import subreddit from './queries/subreddit';
 
 const schema = mongo => new Schema({
   query: new ObjectType({
@@ -21,6 +22,7 @@ const schema = mongo => new Schema({
     fields: {
       alerts: alerts(mongo),
       createAlert: createAlert(mongo),
+      subreddit: subreddit(mongo),
     },
   }),
 });

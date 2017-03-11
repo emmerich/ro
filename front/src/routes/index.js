@@ -17,6 +17,7 @@ export default {
   // Keep in mind, routes are evaluated in order
   children: [
     require('./home').default,
+    require('./subreddit').default,
     require('./contact').default,
     require('./login').default,
     require('./register').default,

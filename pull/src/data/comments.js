@@ -58,7 +58,7 @@ const flattenCommentArray = (arr) => {
 }
 
 export default async (subreddit, postID, graw, log) => {
-  const url = `/r/${subreddit}/comments/${postID}?depth=2&sort=top&limit=50`
+  const url = `/r/${subreddit}/comments/${postID}?depth=2&sort=confidence&limit=50`
   const resp = await graw(url)
 
   // The first item in the array is the post itself. Omit this.

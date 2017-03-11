@@ -1,4 +1,5 @@
 import fetch from 'node-fetch'
+import { queue } from 'async'
 import { defer } from 'q'
 import createStore from './store'
 
@@ -23,7 +24,7 @@ const refreshID = async (log) => {
 // }
 }
 
-const request = (url, id) => fetch(url, {
+const request = async (url, id) => fetch(url, {
   headers: {
     'Authorization': `bearer ${id}`,
     'User-Agent': process.env.REDDIT_UA
@@ -31,45 +32,57 @@ const request = (url, id) => fetch(url, {
 })
 
 const create = async (redis, log) => {
-  let requestQueue = []
   const store = createStore(redis)
   let id = await store.getKey()
 
-  const first = defer()
-  let currentRequest = first.promise
-  first.resolve()
+  const doRequest = async (url) => {
+    let res = await request(url, id)
+
+    log.trace(`GRAW ${res.status} ${url}`)
+
+    if(res.status === 401) {
+      log.debug(`GRAW key has expired. Requesting new key.`)
+      // ID has expired, need a new one.
+      id = await refreshID(log)
+
+      log.trace(`GRAW new access token ${id}`)
+      await store.setKey(id)
+
+      res = await request(url, id)
+    }
+
+    if(res.status !== 200) {
+      log.error(`GRAW returned bad status ${res.statusText}`)
+      throw `bad status ${res.status}`
+    }
+
+    return res.json()
+  }
+
+  const requestQueue = queue(async (task, callback) => {
+    const url = task.url
+
+    try {
+      const resp = await doRequest(url)
+      callback(null, resp)
+    } catch (err) {
+      callback(err)
+    }
+  }, 1)
 
   log.info(`Built GRAW. Initial id: ${id}`)
 
-  return async (url) => {
+  return async (url) => new Promise((resolve, reject) => {
     let actualURL = `https://oauth.reddit.com${url}`
 
-    currentRequest = currentRequest.then(async () => {
-      let res = await request(actualURL, id)
-
-      log.trace(`GRAW ${res.status} ${actualURL}`)
-
-      if(res.status === 401) {
-        log.debug(`GRAW key has expired. Requesting new key.`)
-        // ID has expired, need a new one.
-        id = await refreshID(log)
-
-        log.trace(`GRAW new access token ${id}`)
-        await store.setKey(id)
-
-        res = await request(actualURL, id)
+    requestQueue.push({ url: actualURL }, (err, resp) => {
+      if(err) {
+        return reject(err)
       }
 
-      if(res.status !== 200) {
-        log.error(`GRAW returned bad status ${res.statusText}`)
-        throw `bad status ${res.status}`
-      }
-
-      return res.json()
+      return resolve(resp)
     })
-
-    return currentRequest
-  }
+  })
 }
 
 export default create

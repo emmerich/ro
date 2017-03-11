@@ -31,9 +31,7 @@ const UNWANTED_POST_FIELDS = [
   'secure_media',
   'secure_media_embed',
   'subreddit_type',
-  'created',
-  'domain',
-  'url'
+  'created'
 ]
 
 const UNWANTED_MEDIA_FIELD = [
@@ -47,10 +45,11 @@ export default async (subreddit, graw, log) => {
   const resp = await graw(url)
 
   const posts = resp.data.children
-  const thinPosts = posts.map((post) =>
+  const thinPosts = posts.map((post, index) =>
     Object.assign(
       omit(UNWANTED_POST_FIELDS, post.data),
       {
+        position: index,
         media: omit(UNWANTED_MEDIA_FIELD, post.media)
       }
     )

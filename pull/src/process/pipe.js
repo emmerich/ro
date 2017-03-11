@@ -1,11 +1,20 @@
-import { omit, assoc, difference } from 'ramda'
-import { version } from '../../package.json'
+import { omit, assoc, pipe, dissoc, difference } from 'ramda'
 
 const getKey = (subreddit, postID) => `current:${subreddit}:${postID}`
 const getAllKeys = (subreddit) => `current:${subreddit}:*`
 const getPostFromRedditKey = (subreddit, key) => key.replace(`current:${subreddit}:`, '')
 
-const buildNewPost = (post) => Object.assign({}, post, { version })
+const updatePosition = (post, now) => {
+  const positions = (post.positions || []).concat({
+    timestamp: now,
+    position: post.position
+  })
+
+  return pipe(
+    assoc('positions', positions),
+    dissoc('position')
+  )(post)
+}
 
 export default (redisPub, redis, log) => {
   return async ({ subreddit, posts }) => {
@@ -19,13 +28,14 @@ export default (redisPub, redis, log) => {
       const isNew = !previous
 
       // TODO This can emit the same post multiple times even if the post did not change.
-      let updatedPost = isNew ? buildNewPost(post) : JSON.parse(previous)
+      let updatedPost = isNew ? post : Object.assign(JSON.parse(previous), post)
 
       if(isNew) {
         updatedPost = assoc('entered_frontpage', now, updatedPost)
       }
 
       updatedPost = assoc('last_fetch', now, updatedPost)
+      updatedPost = updatePosition(updatedPost, now)
 
       const stringified = JSON.stringify(updatedPost)
       await redis.set(key, stringified)

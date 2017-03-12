@@ -10,12 +10,35 @@
 import {
   GraphQLObjectType as ObjectType,
   GraphQLString as StringType,
+  GraphQLInt as IntType,
+  GraphQLFloat as FloatType,
 } from 'graphql';
+import TimeSeriesType from './TimeSeriesType';
+import BarSeriesType from './BarSeriesType';
+import PieChartType from './PieChartType';
+import TableDataType from './TableDataType';
 
 const SubredditType = new ObjectType({
   name: 'Subreddit',
   fields: {
     name: { type: StringType },
+    subtitle: { type: StringType },
+    numberOfSubscribers: { type: IntType },
+    averageTimeSpentOnFrontPage: { type: FloatType },
+    bestTimeToPost: { type: TimeSeriesType },
+    topDomains: { type: BarSeriesType },
+    percentageOfSelfPosts: { type: PieChartType },
+
+    selfPostOrLink: {
+      type: new ObjectType({
+        name: 'SelfPostOrLink',
+        fields: {
+          percentageDifference: { type: PieChartType },
+          postPosition: { type: TableDataType },
+          numberOfUpvotes: { type: TableDataType },
+        },
+      }),
+    },
   },
 });
 

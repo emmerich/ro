@@ -1,0 +1,13 @@
+@import '../../../node_modules/purecss/build/pure-min.css';
+
+.container {
+  composes: pure-g;
+}
+
+.lhs {
+  composes: pure-u-1-2;
+}
+
+.rhs {
+  composes: pure-u-1-2;
+}

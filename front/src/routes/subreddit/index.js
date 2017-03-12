@@ -20,7 +20,41 @@ export default {
     const { data } = await (await graphql({
       query: `query GetSubreddit($name: String!) {
         subreddit(name: $name) {
-          name
+          name,
+          subtitle,
+          numberOfSubscribers,
+          averageTimeSpentOnFrontPage,
+
+          selfPostOrLink {
+            percentageDifference {
+              data {
+                slice,
+                size
+              }
+            },
+
+            postPosition {
+              rows
+            },
+
+            numberOfUpvotes {
+              rows
+            }
+          },
+
+          bestTimeToPost {
+            data {
+              x,
+              y
+            }
+          },
+
+          topDomains {
+            data {
+              x,
+              y
+            }
+          }
         }
       }`,
       variables: {

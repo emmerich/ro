@@ -4,3 +4,4 @@ output
 dist
 build
 ncp-debug.log
+.DS_Store

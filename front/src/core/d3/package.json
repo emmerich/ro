@@ -1,0 +1,6 @@
+{
+  "private": true,
+  "name": "d3",
+  "main": "./d3.server.js",
+  "browser": "./d3.client.js"
+}

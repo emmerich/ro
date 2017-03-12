@@ -1,4 +1,5 @@
-export default () => ({
+
+const topDomains = async () => ({
   data: [
     {
       x: 'google.com',
@@ -13,4 +14,8 @@ export default () => ({
       y: 30,
     },
   ],
+});
+
+export default async () => ({
+  topDomains: await topDomains(),
 });

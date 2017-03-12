@@ -17,15 +17,13 @@ export default {
   path: '/r/:name',
 
   async action(req, { name }) {
-    const { data } = await (await graphql({
+    const resp = await graphql({
       query: `query GetSubreddit($name: String!) {
         subreddit(name: $name) {
           name,
-          subtitle,
-          numberOfSubscribers,
           averageTimeSpentOnFrontPage,
 
-          selfPostOrLink {
+          postTypeAnalysis {
             percentageDifference {
               data {
                 slice,
@@ -42,25 +40,33 @@ export default {
             }
           },
 
+          postTitleAnalysis {
+            test
+          },
+
+          postContentAnalysis {
+            topDomains {
+              data {
+                x,
+                y
+              }
+            }
+          },
+
           bestTimeToPost {
             data {
               x,
               y
             }
           },
-
-          topDomains {
-            data {
-              x,
-              y
-            }
-          }
         }
       }`,
       variables: {
         name,
       },
-    })).json();
+    });
+
+    const { data } = await resp.json();
 
     if (!data || !data.subreddit) throw new Error('Failed to load the news feed.');
 

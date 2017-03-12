@@ -3,8 +3,9 @@ import {
 } from 'graphql';
 import SubredditType from '../types/SubredditType';
 import bestTimeToPost from '../datum/bestTimeToPost';
-import topDomains from '../datum/topDomains';
-import selfPostOrLink from '../datum/selfPostOrLink';
+import postTypeAnalysis from '../datum/postTypeAnalysis';
+import postTitleAnalysis from '../datum/postTitleAnalysis';
+import postContentAnalysis from '../datum/postContentAnalysis';
 
 const subreddit = () => ({
   type: SubredditType,
@@ -16,16 +17,17 @@ const subreddit = () => ({
   },
 
   async resolve(req, { name }) {
-    return {
+    const data = {
       name,
-      subtitle: 'A subreddit about saying hello',
-      numberOfSubscribers: Math.floor(Math.random() * 2000),
       averageTimeSpentOnFrontPage: Math.random() * 720,
       bestTimeToPost: await bestTimeToPost(),
-      topDomains: await topDomains(),
 
-      selfPostOrLink: await selfPostOrLink(),
+      postTypeAnalysis: await postTypeAnalysis(),
+      postTitleAnalysis: await postTitleAnalysis(),
+      postContentAnalysis: await postContentAnalysis(),
     };
+
+    return data;
   },
 });
 

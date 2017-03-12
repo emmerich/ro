@@ -1,9 +1,9 @@
 import React from 'react';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
-import PercentageOfSelfPosts from '../../components/PercentageOfSelfPosts';
-import ComparisonTable from '../../components/ComparisonTable';
+import PercentageOfSelfPosts from '../PercentageOfSelfPosts';
+import ComparisonTable from '../ComparisonTable';
 import { TableData, PieChartDatum } from '../../propTypes';
-import s from './SelfpostOrLink.css';
+import s from './style.css';
 
 export const PropTypes = {
   percentageDifference: PieChartDatum.isRequired,
@@ -11,14 +11,14 @@ export const PropTypes = {
   numberOfUpvotes: TableData.isRequired,
 };
 
-class SelfpostOrLink extends React.Component {
+class PostTypeAnalysis extends React.Component {
 
   static propTypes = PropTypes;
 
   render() {
     return (
       <section>
-        <h3>Self-post or Link?</h3>
+        <h3>Self-post vs. Link</h3>
         <section className={s.container}>
           <section className={s.lhs}>
             <PercentageOfSelfPosts datum={this.props.percentageDifference} />
@@ -39,4 +39,4 @@ class SelfpostOrLink extends React.Component {
   }
 }
 
-export default withStyles(s)(SelfpostOrLink);
+export default withStyles(s)(PostTypeAnalysis);

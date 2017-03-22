@@ -1,6 +1,7 @@
 import fetch from 'node-fetch'
 import { queue } from 'async'
 import { defer } from 'q'
+import { RateLimiter } from 'limiter'
 import createStore from './store'
 
 const refreshID = async (log) => {
@@ -59,28 +60,17 @@ const create = async (redis, log) => {
     return res.json()
   }
 
-  const requestQueue = queue(async (task, callback) => {
-    const url = task.url
-
-    try {
-      const resp = await doRequest(url)
-      callback(null, resp)
-    } catch (err) {
-      callback(err)
-    }
-  }, 1)
-
+  const rateLimiter = new RateLimiter(60, 'second')
   log.info(`Built GRAW. Initial id: ${id}`)
 
   return async (url) => new Promise((resolve, reject) => {
-    let actualURL = `https://oauth.reddit.com${url}`
-
-    requestQueue.push({ url: actualURL }, (err, resp) => {
-      if(err) {
-        return reject(err)
+    rateLimiter.removeTokens(1, (err, remainingRequests) => {
+      try {
+        const response = await doRequest(`https://oauth.reddit.com${url}`)
+        resolve(response)
+      } catch(err) {
+        reject(err)
       }
-
-      return resolve(resp)
     })
   })
 }

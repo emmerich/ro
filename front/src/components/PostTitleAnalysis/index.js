@@ -21,6 +21,7 @@ class PostTitleAnalysis extends React.Component {
     return (<section>
       <h3>Post Title</h3>
       <h4>Average Title Length</h4>
+
       <h4>Popular keywords</h4>
     </section>);
   }

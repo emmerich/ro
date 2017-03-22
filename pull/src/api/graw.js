@@ -60,7 +60,7 @@ const create = async (redis, log) => {
     return res.json()
   }
 
-  const rateLimiter = new RateLimiter(60, 'second')
+  const rateLimiter = new RateLimiter(1, 'second')
   log.info(`Built GRAW. Initial id: ${id}`)
 
   return async (url) => new Promise((resolve, reject) => {
